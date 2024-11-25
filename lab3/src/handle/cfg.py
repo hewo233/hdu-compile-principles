@@ -70,21 +70,17 @@ class CFG:
 
     def eliminate_left_recursion(self) -> None:
         """消除左递归的函数"""
-        # 获取文法中的所有非终结符号，形成一个列表
         nonterminalSyms = list(self.grammar.keys())
 
         # 按顺序处理每个非终结符号
         for i in range(len(nonterminalSyms)):
             nonterminalSym = nonterminalSyms[i]
-            # 获取当前非终结符号的产生式列表
             productions = self.grammar[nonterminalSym]
 
-            # 初始化两个列表，用于存储非左递归和左递归的产生式
             nonrecursiveProductions: list[list[str]] = []
             recursiveProductions: list[list[str]] = []
 
-            # 消除间接左递归
-            # 遍历在当前非终结符号之前的所有非终结符号
+            # 消除间接左递归, 遍历在当前非终结符号之前的所有非终结符号
             for j in range(i):
                 # 对当前非终结符号的每个产生式进行检查
                 for prod in productions.copy():
@@ -98,11 +94,8 @@ class CFG:
                             ]
                         )
 
-            # 将产生式分类为左递归和非左递归
             for newProd in productions:
-                # 如果产生式的首符号是自身，存在直接左递归
                 if newProd[0] == nonterminalSym:
-                    # 将左递归产生式的首符号去掉，剩余部分添加到递归右部列表
                     recursiveProductions.append(newProd[1:])
                 else:
                     nonrecursiveProductions.append(newProd)
@@ -118,7 +111,6 @@ class CFG:
                 recursiveProductions.append(["ε"])
                 self.add_rule(newNonterminalSym, recursiveProductions)
             else:
-                # 如果不存在直接左递归，直接更新当前非终结符号的产生式
                 self.grammar[nonterminalSym] = nonrecursiveProductions
 
     def extract_left_common_factors(self):
